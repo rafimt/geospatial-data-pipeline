@@ -47,3 +47,5 @@ desktop.ini
 .idea/
 *.code-workspace
 scripts/cache/
+.claude/
+run_step08.bat
