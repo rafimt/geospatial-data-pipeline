@@ -1,93 +1,74 @@
 # End-to-End Geospatial Data Pipeline
 
-**Learning project** — building a multi-source geospatial data pipeline using freely available datasets, GDAL, PostGIS, and Python.
-
-Inspired by urban planning intelligence workflows, adapted for open-source reproducibility.
+This project started as a hands-on way to learn **PostGIS** and **Docker** — setting up a spatial database, loading real-world data into it, and running spatial queries manually. As the project grew, each step was automated with Python scripts, turning the manual workflow into a reproducible pipeline. The study area is **Denver, Colorado**, using freely available datasets from USGS, OpenStreetMap, and Google Earth Engine.
 
 ---
 
 ## Study Area
 
-**Denver, Colorado, USA**
-- Excellent USGS 3DEP LiDAR + DEM coverage
-- Rich OpenStreetMap data
-- NLCD land use data available
-- Bounding box: `-105.05, 39.60, -104.85, 39.80` (WGS84)
+**Denver, Colorado, USA** — bounding box: `-105.05, 39.60, -104.85, 39.80` (WGS84)
 
 ---
 
-<!-- ## Pipeline Steps
+## Scripts
 
-| Step | File | Description |
-|------|------|-------------|
-| 0 | [00_environment_setup.md](00_environment_setup.md) | Docker, PostGIS, GDAL, Python env |
-| 1 | [01_data_acquisition.md](01_data_acquisition.md) | Download free datasets |
-| 2 | [02_lidar_point_cloud.md](02_lidar_point_cloud.md) | LiDAR processing with PDAL |
-| 3 | [03_surface_modeling_dem_dsm.md](03_surface_modeling_dem_dsm.md) | DEM/DSM processing with GDAL |
-| 4 | [04_vector_feature_extraction.md](04_vector_feature_extraction.md) | OSM vector data via OGR |
-| 5 | [05_postgis_integration.md](05_postgis_integration.md) | Load all data into PostGIS |
-| 6 | [06_spatial_analysis.md](06_spatial_analysis.md) | Spatial queries and classification |
-| 7 | [07_quality_control.md](07_quality_control.md) | Validation, topology, metadata |
-| 8 | [08_visualization.md](08_visualization.md) | Interactive maps and QGIS |
+### `01_download_data.py`
+Downloads all raw data for the study area. Fetches a 10m DEM from the USGS National Map API, a 30m SRTM DEM from OpenTopography, roads and buildings from OpenStreetMap via `osmnx`, and a Sentinel-2 surface reflectance composite from Google Earth Engine using `geemap`.
 
---- -->
+### `02_lidar_processing.py`
+Processes a LiDAR point cloud (`.laz`) using PDAL pipelines. Runs ground classification, filters noise, and produces a Digital Terrain Model (DTM) and Digital Surface Model (DSM) as GeoTIFFs.
+
+### `03_dem_processing.py`
+Takes the raw DEM and LiDAR-derived rasters through GDAL processing. Reprojects to a local CRS, generates a hillshade, slope, and normalized DSM (nDSM = DSM − DTM) which represents above-ground heights like buildings and trees.
+
+### `04_vector_extraction.py`
+Cleans and prepares OSM vector data. Reprojects roads and building footprints, fixes invalid geometries, and exports them as GeoJSON ready for database loading.
+
+### `05_load_postgis.py`
+Loads all processed data into a PostGIS database running in Docker. Creates schemas, loads vector layers with `geopandas`, and uses `raster2pgsql` to import raster tiles.
+
+### `06_spatial_analysis.py` / `06_spatial_analysis.sql`
+Runs spatial analysis queries inside PostGIS. Generates 50m road influence buffers, extracts LiDAR height values for each building using raster sampling, clusters buildings with `ST_ClusterDBSCAN`, and scores parcels for land suitability based on road proximity and land use.
+
+### `07_qc_validation.py`
+Validates the processed data. Checks for geometry errors, null values, CRS mismatches, and out-of-range raster values. Prints a summary report of any issues found.
+
+### `08_visualization.py`
+Exports PostGIS layers to GeoJSON and builds an interactive Folium map showing buildings colored by LiDAR height, road influence zones, and land suitability scores. Also generates a side-by-side raster preview (hillshade, slope, nDSM) using Matplotlib.
+
+---
+
+## Notebook
+
+### `notebooks/visualization.ipynb`
+Interactive visualization using Google Earth Engine and Matplotlib. Shows a Sentinel-2 true color composite, NDVI distribution, monthly NDVI time series, and OSM building/road maps for the Denver study area.
+
+---
 
 ## Technology Stack
 
 | Category | Tools |
-|----------|-------|
+|---|---|
 | Raster processing | GDAL, rasterio, numpy |
 | Vector processing | OGR, geopandas, shapely, osmnx |
 | Point cloud | PDAL, laspy |
 | Spatial database | PostgreSQL 15 + PostGIS 3.4 |
-| Visualization | Folium, QGIS, Kepler.gl |
-| Language | Python 3.11+ |
+| Satellite imagery | Google Earth Engine, geemap |
+| Visualization | Folium, Matplotlib |
+| Language | Python 3.11 |
 | Infrastructure | Docker, Docker Compose |
 
 ---
 
-## Free Data Sources
+## Data Sources
 
-| Dataset | Source | Format | Size |
-|---------|--------|--------|------|
-| DEM 1m/10m | USGS 3DEP (nationalmap.gov) | GeoTIFF | ~50MB |
-| DEM 30m global | NASA SRTM / Copernicus DEM | GeoTIFF | ~5MB |
-| Satellite imagery | Sentinel-2 (Copernicus Hub) | GeoTIFF | ~500MB |
-| Roads & buildings | OpenStreetMap via osmnx | GeoJSON | ~20MB |
-| LiDAR point cloud | OpenTopography.org | LAZ | ~1GB |
-| Land use | NLCD 2021 (USGS) | GeoTIFF | ~30MB |
-
----
-
-## Directory Structure
-
-```
-geospatial/
-├── README.md
-├── plan.md
-├── 00_environment_setup.md
-├── 01_data_acquisition.md
-├── 02_lidar_point_cloud.md
-├── 03_surface_modeling_dem_dsm.md
-├── 04_vector_feature_extraction.md
-├── 05_postgis_integration.md
-├── 06_spatial_analysis.md
-├── 07_quality_control.md
-├── 08_visualization.md
-├── scripts/
-│   ├── 01_download_data.py
-│   ├── 02_lidar_processing.py
-│   ├── 03_dem_processing.py
-│   ├── 04_vector_extraction.py
-│   ├── 05_load_postgis.py
-│   ├── 06_spatial_analysis.sql
-│   └── 07_qc_validation.py
-├── data/
-│   ├── raw/
-│   ├── processed/
-│   └── output/
-└── docker-compose.yml
-```
+| Dataset | Source | Format |
+|---|---|---|
+| DEM 10m | USGS 3DEP (nationalmap.gov) | GeoTIFF |
+| DEM 30m | NASA SRTM via OpenTopography | GeoTIFF |
+| Satellite imagery | Sentinel-2 via Google Earth Engine | GeoTIFF |
+| Roads & buildings | OpenStreetMap via osmnx | GeoJSON |
+| LiDAR point cloud | OpenTopography.org | LAZ |
 
 ---
 
@@ -97,22 +78,44 @@ geospatial/
 # 1. Start PostGIS
 docker-compose up -d
 
-# 2. Create Python environment
-conda create -n geospatial python=3.11
-conda activate geospatial
-pip install gdal rasterio geopandas shapely pyproj osmnx psycopg2-binary laspy pdal folium
+# 2. Activate environment
+.venv\Scripts\activate       # Windows
+source .venv/bin/activate    # Mac/Linux
 
-# 3. Follow steps 01 → 08 in order
+# 3. Run pipeline steps in order
+python scripts/01_download_data.py
+python scripts/02_lidar_processing.py
+python scripts/03_dem_processing.py
+python scripts/04_vector_extraction.py
+python scripts/05_load_postgis.py
+python scripts/06_spatial_analysis.py
+python scripts/07_qc_validation.py
+python scripts/08_visualization.py
 ```
 
 ---
 
-## Learning Objectives
+## Directory Structure
 
-- Understand raster vs vector geospatial data
-- Apply coordinate reference systems (CRS) and reprojection
-- Use GDAL CLI tools and Python bindings
-- Store and query spatial data in PostGIS
-- Perform spatial analysis: buffers, overlays, interpolation
-- Validate data quality for geospatial workflows
-
+```
+geospatial-data-pipeline/
+├── scripts/
+│   ├── 01_download_data.py
+│   ├── 02_lidar_processing.py
+│   ├── 03_dem_processing.py
+│   ├── 04_vector_extraction.py
+│   ├── 05_load_postgis.py
+│   ├── 06_spatial_analysis.py
+│   ├── 06_spatial_analysis.sql
+│   ├── 07_qc_validation.py
+│   └── 08_visualization.py
+├── notebooks/
+│   └── visualization.ipynb
+├── data/
+│   ├── raw/
+│   ├── processed/
+│   └── output/
+├── docker-compose.yml
+├── requirements.txt
+└── environment.yml
+```
