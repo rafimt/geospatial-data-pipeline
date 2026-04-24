@@ -1,0 +1,43 @@
+# Geospatial Python Stack
+# Install with: pip install -r requirements.txt
+# NOTE: gdal, rasterio, fiona, psycopg2 are best installed via conda-forge (see 00_environment_setup.md)
+
+# Core geospatial
+rasterio
+geopandas
+shapely
+pyproj
+fiona
+osmnx
+
+# Point cloud / LiDAR
+laspy
+lazrs
+pdal
+python-pdal
+
+# Database
+psycopg2-binary
+sqlalchemy
+geoalchemy2
+
+# Visualization
+folium
+matplotlib
+contextily
+mapclassify
+
+# Remote sensing / satellite
+earthengine-api
+geemap
+
+# Data / utilities
+numpy
+pandas
+requests
+tqdm
+
+# Notebook
+jupyter
+jupyterlab
+ipykernel

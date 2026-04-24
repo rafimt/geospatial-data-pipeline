@@ -1,0 +1,21 @@
+{
+  "pipeline": [
+    {
+      "type": "readers.las",
+      "filename": "C:\\RMTPROJECTS\\dataengineering\\geospatial\\data\\processed/lidar_classified.laz"
+    },
+    {
+      "type": "filters.range",
+      "limits": "returnnumber[1:1]"
+    },
+    {
+      "type": "writers.gdal",
+      "filename": "C:\\RMTPROJECTS\\dataengineering\\geospatial\\data\\processed/dsm_from_lidar.tif",
+      "resolution": 1.0,
+      "output_type": "max",
+      "radius": 1.5,
+      "gdaldriver": "GTiff",
+      "gdalopts": "COMPRESS=LZW"
+    }
+  ]
+}

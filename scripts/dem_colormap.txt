@@ -1,0 +1,11 @@
+# DEM elevation colormap for Denver, CO (meters)
+# Format: elevation R G B
+# Used with: gdaldem color-relief dem_filled.tif dem_colormap.txt dem_colorized.tif
+
+1550  68   1  84
+1650  59  82 139
+1750  33 145 140
+1850  94 201  98
+1950 253 231  37
+2100 255 255 255
+nv     0   0   0

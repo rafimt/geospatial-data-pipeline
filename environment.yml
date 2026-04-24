@@ -1,0 +1,37 @@
+name: geospatial
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.11
+  # Core geospatial (conda-forge required for correct DLL linkage on Windows)
+  - rasterio
+  - geopandas
+  - shapely
+  - pyproj
+  - fiona
+  - gdal
+  - psycopg2
+  - numpy
+  - pandas
+  # Notebook
+  - jupyter
+  - jupyterlab
+  - ipykernel
+  - pip
+  - pip:
+    # Install these via pip after conda resolves the C-extension stack
+    - osmnx
+    - laspy
+    - lazrs
+    - python-pdal
+    - sqlalchemy
+    - geoalchemy2
+    - folium
+    - matplotlib
+    - contextily
+    - mapclassify
+    - earthengine-api
+    - geemap
+    - requests
+    - tqdm
