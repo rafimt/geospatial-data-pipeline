@@ -46,3 +46,4 @@ desktop.ini
 .vscode/
 .idea/
 *.code-workspace
+scripts/cache/
