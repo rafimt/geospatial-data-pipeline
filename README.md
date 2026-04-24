@@ -16,7 +16,7 @@ Inspired by urban planning intelligence workflows, adapted for open-source repro
 
 ---
 
-## Pipeline Steps
+<!-- ## Pipeline Steps
 
 | Step | File | Description |
 |------|------|-------------|
@@ -30,7 +30,7 @@ Inspired by urban planning intelligence workflows, adapted for open-source repro
 | 7 | [07_quality_control.md](07_quality_control.md) | Validation, topology, metadata |
 | 8 | [08_visualization.md](08_visualization.md) | Interactive maps and QGIS |
 
----
+--- -->
 
 ## Technology Stack
 
@@ -115,4 +115,4 @@ pip install gdal rasterio geopandas shapely pyproj osmnx psycopg2-binary laspy p
 - Store and query spatial data in PostGIS
 - Perform spatial analysis: buffers, overlays, interpolation
 - Validate data quality for geospatial workflows
-- Build interactive maps from pipeline outputs
+
