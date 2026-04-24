@@ -23,7 +23,6 @@ scripts/data/
 
 # Jupyter
 .ipynb_checkpoints/
-*.ipynb
 
 # Environment
 *.env
