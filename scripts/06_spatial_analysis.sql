@@ -9,7 +9,7 @@
 -- ============================================================
 
 -- $env:PGPASSWORD="geopass"
--- & "C:\Program Files\PostgreSQL\17\bin\psql.exe" -h 127.0.0.1 -p 5433 -U geouser -d geospatial -f "C:\RMTPROJECTS\dataengineering\geospatial\scripts\06_spatial_analysis.sql"
+-- & "C:\Program Files\PostgreSQL\17\bin\psql.exe" -h 127.0.0.1 -p 5433 -U geouser -d geospatial -f "C:\RMTPROJECTS\dataengineering\geospatial-data-pipeline\scripts\06_spatial_analysis.sql"
 
 
 DROP TABLE IF EXISTS analysis.road_influence;

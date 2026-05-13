@@ -18,8 +18,8 @@ import geopandas as gpd    # GeoDataFrame — like pandas but geometry-aware
 import pandas as pd        # used for pd.to_numeric (parse OSM height strings)
 
 # Absolute paths so the script works regardless of working directory
-RAW_DIR  = r'C:\RMTPROJECTS\dataengineering\geospatial\data\raw'
-PROC_DIR = r'C:\RMTPROJECTS\dataengineering\geospatial\data\processed'
+RAW_DIR  = r'C:\RMTPROJECTS\dataengineering\geospatial-data-pipeline\data\raw'
+PROC_DIR = r'C:\RMTPROJECTS\dataengineering\geospatial-data-pipeline\data\processed'
 
 # All outputs will be in this projected CRS — UTM Zone 13N, unit = metres
 # Required for accurate area, distance, and buffer calculations in Colorado

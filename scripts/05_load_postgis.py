@@ -41,8 +41,8 @@ PG_DSN = f"host={DB['host']} port={DB['port']} dbname={DB['dbname']} user={DB['u
 # ogr2ogr needs the DSN wrapped in PG:"..." to know it's a PostgreSQL target
 PG_OGR = f"PG:{PG_DSN}"
 
-PROC_DIR = r'C:\RMTPROJECTS\dataengineering\geospatial\data\processed'  # folder where our processed files live
-RAW_DIR = r'C:\RMTPROJECTS\dataengineering\geospatial\data\raw'          # folder where raw source files live (not used directly here)
+PROC_DIR = r'C:\RMTPROJECTS\dataengineering\geospatial-data-pipeline\data\processed'  # folder where our processed files live
+RAW_DIR = r'C:\RMTPROJECTS\dataengineering\geospatial-data-pipeline\data\raw'          # folder where raw source files live (not used directly here)
 SRID = 32613                  # coordinate system: UTM Zone 13N (EPSG code)
 
 

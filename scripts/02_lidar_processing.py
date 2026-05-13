@@ -21,9 +21,9 @@ import subprocess                # run PDAL as a command-line tool from Python
 from collections import Counter  # count how many points fall in each LAS class
 
 # Absolute paths so the script works regardless of where you run it from
-RAW_DIR    = r'C:\RMTPROJECTS\dataengineering\geospatial\data\raw'
-PROC_DIR   = r'C:\RMTPROJECTS\dataengineering\geospatial\data\processed'
-SCRIPTS_DIR = r'C:\RMTPROJECTS\dataengineering\geospatial\scripts'
+RAW_DIR    = r'C:\RMTPROJECTS\dataengineering\geospatial-data-pipeline\data\raw'
+PROC_DIR   = r'C:\RMTPROJECTS\dataengineering\geospatial-data-pipeline\data\processed'
+SCRIPTS_DIR = r'C:\RMTPROJECTS\dataengineering\geospatial-data-pipeline\scripts'
 
 os.makedirs(PROC_DIR, exist_ok=True)  # create processed/ folder if it doesn't exist yet
 

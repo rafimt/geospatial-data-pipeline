@@ -18,8 +18,8 @@ from rasterio.warp import calculate_default_transform, reproject, Resampling
 from rasterio.fill import fillnodata
 import numpy as np
 
-RAW_DIR = r'C:\RMTPROJECTS\dataengineering\geospatial\data\raw'
-PROC_DIR = r'C:\RMTPROJECTS\dataengineering\geospatial\data\processed'
+RAW_DIR = r'C:\RMTPROJECTS\dataengineering\geospatial-data-pipeline\data\raw'
+PROC_DIR = r'C:\RMTPROJECTS\dataengineering\geospatial-data-pipeline\data\processed'
 DST_CRS = "EPSG:32613"
 
 os.makedirs(PROC_DIR, exist_ok=True)
@@ -110,6 +110,41 @@ def compute_ndsm(dsm_path: str, dtm_path: str, out_path: str):
     print(f"  Max above-ground height: {ndsm.max():.1f}m")
 
 
+def reproject_nlcd(src_path: str, dst_path: str, dst_crs: str = DST_CRS, resolution: float = 30.0):
+    """Reproject NLCD raster to UTM Zone 13N using nearest-neighbour resampling to preserve class values."""
+    print(f"Reprojecting NLCD: {src_path} → {dst_path}")
+
+    with rasterio.open(src_path) as src:
+        print(f"  Source CRS: {src.crs}, size: {src.width}x{src.height}")
+
+        transform, width, height = calculate_default_transform(
+            src.crs, dst_crs, src.width, src.height, *src.bounds,
+            resolution=resolution
+        )
+        kwargs = src.meta.copy()
+        kwargs.update({
+            "crs": dst_crs,
+            "transform": transform,
+            "width": width,
+            "height": height,
+            "compress": "lzw",
+        })
+
+        with rasterio.open(dst_path, "w", **kwargs) as dst:
+            for band_idx in range(1, src.count + 1):
+                reproject(
+                    source=rasterio.band(src, band_idx),
+                    destination=rasterio.band(dst, band_idx),
+                    src_transform=src.transform,
+                    src_crs=src.crs,
+                    dst_transform=transform,
+                    dst_crs=dst_crs,
+                    resampling=Resampling.nearest,  # nearest-neighbour preserves categorical class values
+                )
+
+    print(f"  Output size: {width}x{height}, res: {resolution}m, CRS: {dst_crs}")
+
+
 def main():
     print("=" * 60)
     print("Geospatial Pipeline — Step 02: DEM Processing")
@@ -130,7 +165,7 @@ def main():
     fill_nodata(dem_utm, dem_filled)
     print_stats(dem_filled, "DEM (Filled)")
 
-    # nDSM (only if LiDAR outputs exist from Step 03)
+    # nDSM (only if LiDAR outputs exist from Step 02)
     dsm_path = f"{PROC_DIR}/dsm_from_lidar.tif"
     dtm_path = f"{PROC_DIR}/dtm_from_lidar.tif"
     ndsm_path = f"{PROC_DIR}/ndsm.tif"
@@ -139,7 +174,17 @@ def main():
         compute_ndsm(dsm_path, dtm_path, ndsm_path)
         print_stats(ndsm_path, "nDSM")
     else:
-        print("\nnDSM skipped — run Step 03 (LiDAR) first to generate DSM/DTM.")
+        print("\nnDSM skipped — run Step 02 (LiDAR) first to generate DSM/DTM.")
+
+    # NLCD — reproject from EPSG:5070 (Albers) to EPSG:32613 (UTM Zone 13N)
+    nlcd_raw = f"{RAW_DIR}/nlcd_utm.tif"
+    nlcd_utm = f"{PROC_DIR}/nlcd_utm.tif"
+
+    if os.path.exists(nlcd_raw):
+        reproject_nlcd(nlcd_raw, nlcd_utm)
+        print_stats(nlcd_utm, "NLCD (UTM)")
+    else:
+        print(f"\nNLCD skipped — {nlcd_raw} not found.")
 
     print("\nStep 02 complete. Run gdaldem for hillshade/slope/aspect:")
     print("  gdaldem hillshade data/processed/dem_filled.tif data/processed/hillshade.tif")

@@ -72,6 +72,51 @@ Interactive visualization using Google Earth Engine and Matplotlib. Shows a Sent
 
 ---
 
+## Installation
+
+Install in this exact order. The C-extension libraries (GDAL, rasterio, fiona) must be installed before the higher-level packages that depend on them — getting this wrong causes DLL errors on Windows.
+
+**Option A — conda (recommended)**
+```bash
+conda env create -f environment.yml
+conda activate geospatial
+```
+
+**Option B — pip with .venv**
+
+Step 1 — Install GDAL first. It is a C library and pip alone cannot build it on Windows. Download the prebuilt wheel from [github.com/cgohlke/geospatial-wheels](https://github.com/cgohlke/geospatial-wheels) and install it manually:
+```bash
+pip install GDAL-3.x.x-cpXXX-win_amd64.whl
+```
+
+Step 2 — Install the remaining C-extension packages in order:
+```bash
+pip install pyproj shapely fiona rasterio
+```
+These depend on GDAL and must come after it.
+
+Step 3 — Install geopandas after fiona and pyproj are ready:
+```bash
+pip install geopandas
+```
+
+Step 4 — Install the database driver:
+```bash
+pip install psycopg2-binary
+```
+
+Step 5 — Install all remaining packages:
+```bash
+pip install osmnx sqlalchemy geoalchemy2 laspy lazrs python-pdal folium matplotlib contextily mapclassify earthengine-api geemap numpy pandas requests tqdm jupyter ipykernel
+```
+
+Step 6 — Register the kernel for Jupyter:
+```bash
+python -m ipykernel install --user --name geospatial-pipeline --display-name "Python (geospatial-pipeline)"
+```
+
+---
+
 ## Quick Start
 
 ```bash

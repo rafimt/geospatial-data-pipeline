@@ -27,7 +27,7 @@ DB = {
     "password": "geopass",
 }
 
-PROC_DIR = r"C:\RMTPROJECTS\dataengineering\geospatial\data\processed"
+PROC_DIR = r"C:\RMTPROJECTS\dataengineering\geospatial-data-pipeline\data\processed"
 EXPECTED_SRID = 32613
 DENVER_ELEV_RANGE = (1500, 2200)  # meters
 
